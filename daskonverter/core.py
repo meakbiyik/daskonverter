@@ -9,15 +9,19 @@ import dask.bytes as dby
 def convert_files(
     urlpath: str,
     targetpath: str,
-    source_filetype=None,
-    target_filetype=None,
-    partition_size=1024,
-    **dask_kwargs,
+    source_filetype: str = None,
+    target_filetype: str = None,
+    reader_kwargs: dict = {},
+    writer_kwargs: dict = {},
 ):
     """Convert source files from urlpath to targetpath.
 
     To use with remote, ensure proper authentication. For GCS, this can be done
     via command `gcloud auth application-default login`
+
+    If run from the console or in a notebook, `dask` may require 
+    `if __name__ == "__main__"` conditional. See dask/distributed/issues/2520
+    for more information.
 
     Parameters
     ----------
@@ -29,9 +33,9 @@ def convert_files(
         File type of the source. If not given, it is inferred from the extension, by default None
     target_filetype : str, optional
         File type of the target. If not given, it is inferred from the extension, by default None
-    partition_size : int, optional
-        For BSON source only, number of documents per partition, by default 1024
-    dask_kwargs : dict, optional
+    reader_kwargs : dict, optional
+        Additional parameter passed to the dask reader (e.g. read_csv, read_json)
+    writer_kwargs : dict, optional
         Additional parameter passed to the dask writer (e.g. to_csv, to_parquet)
 
     Returns
@@ -59,6 +63,8 @@ def convert_files(
     if source_filetype is None:
         source_filetype = str(urlpath).split(".")[-1]
 
+    source_filetype = source_filetype.lower()
+
     if source_filetype not in _FILETYPE_READERS:
         raise ValueError(
             f"Given source_filetype {source_filetype} is not in readable "
@@ -66,8 +72,10 @@ def convert_files(
         )
 
     open_files = dby.open_files(urlpath)
-    reader = _FILETYPE_READERS[source_filetype]
-    df = reader(open_files)
+    reader, _reader_kwargs = _FILETYPE_READERS[source_filetype]
+    _reader_kwargs.update(reader_kwargs)
+
+    df = reader(open_files, **_reader_kwargs)
 
     for file in open_files:
         file.close()
@@ -75,23 +83,21 @@ def convert_files(
     if target_filetype is None:
         target_filetype = str(targetpath).split(".")[-1]
 
+    target_filetype = target_filetype.lower()
+
     if target_filetype not in _FILETYPE_WRITERS:
         raise ValueError(
             f"Given target_filetype {target_filetype} is not in readable "
             f"filetypes {list(_FILETYPE_WRITERS.keys())}."
         )
 
-    if target_filetype == "csv":
-        dask_kwargs["single_file"] = dask_kwargs.get("single_file", True)
-        dask_kwargs["index"] = dask_kwargs.get("index", False)
+    writer, _writer_kwargs = _FILETYPE_WRITERS[target_filetype]
+    _writer_kwargs.update(writer_kwargs)
 
-    writer = _FILETYPE_WRITERS[target_filetype]
-
-    return writer(df)(targetpath, **dask_kwargs)
+    return writer(df)(targetpath, **_writer_kwargs)
 
 
-def bson_reader(open_files, partition_size=1024) -> dd.DataFrame:
-
+def _read_bson(open_files, partition_size) -> dd.DataFrame:
     def metadata_remover(document):
         document.pop("_id", None)
         document.pop("__v", None)
@@ -101,28 +107,26 @@ def bson_reader(open_files, partition_size=1024) -> dd.DataFrame:
         *[bson.decode_file_iter(file.open()) for file in open_files]
     )
 
-    bag = db.from_sequence(
-        file_iterator, partition_size=partition_size
-    )
+    bag = db.from_sequence(file_iterator, partition_size=partition_size)
     df = bag.map(metadata_remover).to_dataframe()
-        
+
     return df
 
 
 _FILETYPE_READERS = {
-    "bson": bson_reader,
-    "csv": dd.read_csv,
-    "table": dd.read_table,
-    "fwf": dd.read_fwf,
-    "parquet": dd.read_parquet,
-    "hdf": dd.read_hdf,
-    "json": dd.read_json,
-    "orc": dd.read_orc,
+    "bson": (_read_bson, {"partition_size": 1024}),
+    "csv": (dd.read_csv, {}),
+    "table": (dd.read_table, {}),
+    "fwf": (dd.read_fwf, {}),
+    "parquet": (dd.read_parquet, {}),
+    "hdf": (dd.read_hdf, {}),
+    "json": (dd.read_json, {}),
+    "orc": (dd.read_orc, {}),
 }
 
 _FILETYPE_WRITERS = {
-    "parquet": lambda df: df.to_parquet,
-    "csv": lambda df: df.to_csv,
-    "hdf": lambda df: df.to_hdf,
-    "json": lambda df: df.to_json,
+    "parquet": (lambda df: df.to_parquet, {}),
+    "csv": (lambda df: df.to_csv, {"single_file": True, "index": False}),
+    "hdf": (lambda df: df.to_hdf, {}),
+    "json": (lambda df: df.to_json, {}),
 }
