@@ -1,14 +1,16 @@
+import itertools
+
 import bson
 import dask.dataframe as dd
 import dask.bag as db
-import gcsfs
+import dask.bytes as dby
 
 
 def convert_files(
     urlpath: str,
     targetpath: str,
+    source_filetype=None,
     target_filetype=None,
-    filetype=None,
     partition_size=1024,
     **dask_kwargs,
 ):
@@ -23,10 +25,10 @@ def convert_files(
         Source file path or glob. Possibly remote, if given with prefixes such as `gcs://`
     targetpath : str
         Target file path, possibly remote
+    source_filetype : str, optional
+        File type of the source. If not given, it is inferred from the extension, by default None
     target_filetype : str, optional
         File type of the target. If not given, it is inferred from the extension, by default None
-    filetype : str, optional
-        File type of the source. If not given, it is inferred from the extension, by default None
     partition_size : int, optional
         For BSON source only, number of documents per partition, by default 1024
     dask_kwargs : dict, optional
@@ -44,44 +46,83 @@ def convert_files(
     >>> if __name__ == "__main__":
     >>>     convert_files("gcs://twitter-data-bucket/big_dump/snp500_articles.bson", "snp500_articles.csv")
     >>>     convert_files("gcs://daskonverter/mongodump.airpair.tags.bson", "test2.csv")
-    >>>     convert_files(r"C:\blah\mongodump.airpair.tags.bson", "test.csv")
+    >>>     convert_files("C:\\blah\\mongodump.airpair.tags.bson", "test.csv")
     >>>     convert_files(
-    >>>         r"C:\blah\mongodump.airpair.tags.bson",
-    >>>         "test.parquet",
-    >>>         write_index=False,
-    >>>         write_metadata_file=False,
-    >>>         partition_size=1024,
-    >>>     )
+                "C:\\blah\\mongodump.airpair.tags.bson",
+                "test.parquet",
+                write_index=False,
+                write_metadata_file=False,
+                partition_size=1024,
+            )
     """
 
-    if filetype is None:
-        filetype = str(urlpath).split(".")[-1]
+    if source_filetype is None:
+        source_filetype = str(urlpath).split(".")[-1]
 
-    if filetype == "bson":
-        if str(urlpath).startswith("gcs://"):
-            fs = gcsfs.GCSFileSystem()
-            opener = fs.open
-        else:
-            opener = open
+    if source_filetype not in _FILETYPE_READERS:
+        raise ValueError(
+            f"Given source_filetype {source_filetype} is not in readable "
+            f"filetypes {list(_FILETYPE_READERS.keys())}."
+        )
 
-        def metadata_remover(document):
-            document.pop("_id", None)
-            document.pop("__v", None)
-            return document
+    open_files = dby.open_files(urlpath)
+    reader = _FILETYPE_READERS[source_filetype]
+    df = reader(open_files)
 
-        with opener(urlpath, "rb") as f:
-            bag = db.from_sequence(
-                bson.decode_file_iter(f), partition_size=partition_size
-            )
-            df = bag.map(metadata_remover).to_dataframe()
-    else:
-        df = getattr(dd, f"read_{filetype}")(urlpath)
+    for file in open_files:
+        file.close()
 
     if target_filetype is None:
         target_filetype = str(targetpath).split(".")[-1]
+
+    if target_filetype not in _FILETYPE_WRITERS:
+        raise ValueError(
+            f"Given target_filetype {target_filetype} is not in readable "
+            f"filetypes {list(_FILETYPE_WRITERS.keys())}."
+        )
 
     if target_filetype == "csv":
         dask_kwargs["single_file"] = dask_kwargs.get("single_file", True)
         dask_kwargs["index"] = dask_kwargs.get("index", False)
 
-    return getattr(df, f"to_{target_filetype}")(targetpath, **dask_kwargs)
+    writer = _FILETYPE_WRITERS[target_filetype]
+
+    return writer(df)(targetpath, **dask_kwargs)
+
+
+def bson_reader(open_files, partition_size=1024) -> dd.DataFrame:
+
+    def metadata_remover(document):
+        document.pop("_id", None)
+        document.pop("__v", None)
+        return document
+
+    file_iterator = itertools.chain(
+        *[bson.decode_file_iter(file.open()) for file in open_files]
+    )
+
+    bag = db.from_sequence(
+        file_iterator, partition_size=partition_size
+    )
+    df = bag.map(metadata_remover).to_dataframe()
+        
+    return df
+
+
+_FILETYPE_READERS = {
+    "bson": bson_reader,
+    "csv": dd.read_csv,
+    "table": dd.read_table,
+    "fwf": dd.read_fwf,
+    "parquet": dd.read_parquet,
+    "hdf": dd.read_hdf,
+    "json": dd.read_json,
+    "orc": dd.read_orc,
+}
+
+_FILETYPE_WRITERS = {
+    "parquet": lambda df: df.to_parquet,
+    "csv": lambda df: df.to_csv,
+    "hdf": lambda df: df.to_hdf,
+    "json": lambda df: df.to_json,
+}

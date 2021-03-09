@@ -20,7 +20,7 @@ pytest = "^6.1.2"
 coverage = "^5.5"
 
 [tool.poetry.extras]
-dslab = ["gcsfs", "fastparquet", "pymongo"]
+full = ["gcsfs", "fastparquet", "pymongo"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -27,5 +27,5 @@ pip install git+https://github.com/meakbiyik/daskonverter.git
 To use with GCS, BSON and parquet altogether:
 
 ```bash
-pip install git+https://github.com/meakbiyik/daskonverter.git#egg=daskonverter[dslab]
+pip install git+https://github.com/meakbiyik/daskonverter.git#egg=daskonverter[full]
 ```
