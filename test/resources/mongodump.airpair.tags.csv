@@ -1,0 +1,53 @@
+desc,name,short,soId,tokens,slug
+"Android is Google&#39;s OS for digital devices[Phone,Tablet,Auto,TV,Watch]. Please use Android-specific tags such as [android-intent], not [intent]. For non-developer/programming questions, see http://android.stackexchange.com.",Android,android,android,"andr,droid",android
+,AWS,aws,aws,,aws
+"Windows Azure is a Platform as a Service (PaaS) and Infrastructure as a Service (IaaS) cloud computing platform by Microsoft. Users of the platform can deploy their applications onto cloud hosting benefiting from on-demand service, elastic scale, and a highly managed environment on a pay-as-you-go basis.",Windows Azure,azure,azure,,azure
+"
+BDD stands for Behavior Driven Development. It is related to, and derived from, TDD (Test Driven Development) and ATDD (Acceptance Test Driven Development), and differs in its language and vocabulary, preferring example, scenario or specification to test.",Behavior Driven Development,bdd,bdd,,bdd
+,Brunch.io,brunch,brunch,,brunch
+"C is a general-purpose computer programming language used for operating systems, games and other high performance work and is clearly distinct from C++. It was developed in 1972 by Dennis Ritchie for use with the Unix operating system.",C,c,c,,c
+"C++ is a general-purpose programming language based on C. Use this tag for questions about code compiled with a C++ compiler, regardless of whether the code could be valid in C, C#, Objective-C and other C based programming languages.",c++,c++,c++,"c++,c+",c++
+"C# is a multi-paradigm programming language encompassing strong typing, imperative, declarative, functional, generic, object-oriented (class-based), and component-oriented programming disciplines.",c#,c#,c#,"c#,c%23",c%23
+Chef is an open source systems integration framework from Chef (formerly Opscode) that allows you to describe the configuration of systems and infrastructure in code. It brings the benefits of configuration management to your entire infrastructure.,Chef,chef,chef,,chef
+"WordPress is an open source content management system running on PHP and MySQL, and often used as a blog engine. WordPress questions not about programming are best asked on http://wordpress.stackexchange.com/",wordpress,wordpress,wordpress,,wordpress
+"CoffeeScript is a little language that compiles into JavaScript. Underneath all of those embarrassing braces and semicolons, JavaScript has always had a gorgeous object model at its heart. CoffeeScript is an attempt to expose the good parts of JavaScript in a simple way.",coffeescript,coffeescript,coffeescript,,coffeescript
+,Crawler,crawler,crawler,,crawler
+"CSS (Cascading Style Sheets) is a language used to control the visual presentation of HTML and XML documents including (but not limited to) colors, layout and fonts.",CSS,css,css,,css
+Method of exchanging digital messages from an author to one or more recipients.,Email,email,email,,email
+,Engine Yard App Cloude,EngineYard,engineyard,,engineyard
+"Express is a minimalistic web application framework for node.js that features regex-based routing, sessions, and support for multiple view engines.",ExpressJS,express,express,,express
+A system designed for the creation and development of video games,Game Development,games,game-engine,,games
+"Heroku (pronounced her-OH-koo) is a cloud platform for Ruby, Node.js, Clojure, Python, PHP and JVM-based (Java, Scala, etc.) applications that features a Git-based deployment strategy, a large number of services offered as add-ons, and a full API.",heroku,heroku,heroku,,heroku
+HTML (HyperText Markup Language) is the principal markup language used for structuring web pages and formatting content. The most recent revision to the HTML specification is HTML5.,html,html,html,,html
+"HTML5 (HyperText Markup Language, version 5) is the latest iteration of HTML.  It introduces new tags and APIs including semantic structural elements such as &lt;nav&gt; and &lt;section&gt;.
+",HTML5,html5,html5,,html5
+"iOS is Apple&#39;s operating system for mobile devices, such as the iPhone, iPod touch, iPad and Apple TV (2nd generation and up). Much is shared with OS X, but iOS is optimized for touch-based interfaces.",ios,ios,ios,,ios
+"specific to Apple&#39;s iPhone and/or iPod touch, but inapplicable to iPad. For questions not dependent on hardware, use the &quot;iOS&quot; tag. Another tag to consider is &quot;cocoa-touch&quot; (but not &quot;cocoa&quot;). Please refrain from questions regarding the iTunes App Store or about iTunes Connect.",iphone,iphone,iphone,,iphone
+,Jasmine,jasmine,jasmine,,jasmine
+Java is a general-purpose programming language designed to be used in conjunction with the Java Virtual Machine (JVM). &quot;Java platform&quot; is the name for a computing system that has installed tools for developing and running Java programs. Use this tag for questions referring to Java programming language or Java platform tools.,java,java,java,,java
+"JavaScript (not to be confused with Java) is a dynamic weakly typed language typically used for client-side scripting. Use this tag for questions regarding ECMAScript and its various dialects/implementations (excluding ActionScript). Unless a tag for a framework/library is also included, a pure JavaScript answer is expected.",javascript,javascript,javascript,"js,jav,java,javas,javasc",javascript
+,jqMobi,jqmobi,jqmobi,,jqmobi
+"jQuery is a popular cross-browser JavaScript library that facilitates DOM (HTML Structure) traversal, event handling, animation and AJAX interactions by minimizing the discrepancies across browsers and providing an easy-to-use API.",jquery,jquery,jquery,,jquery
+"The .NET framework is a software framework designed mainly for the Microsoft Windows operating system. It includes an implementation of the Base Class Library, Common Language Runtime (commonly referred to as CLI) and Dynamic Language Runtime. It supports many programming languages, including C#, VB.NET, F# and C++.",Microsoft .NET,.NET,.net,,.net
+"For questions that are specific to the GNU/Linux operating system. If your question has nothing to do with Linux APIs or Linux-specific behaviour then do not use this tag, even if you are running on Linux.",Linux,linux,linux,,linux
+,Mocha,mocha,mocha,,mocha
+"MongoDB is a scalable, high-performance, open source, document-oriented database.  It supports a large number of languages and application development platforms.  ",MongoDB,Mongo,mongodb,"mon,mong,mongo",mongodb
+"SQL Server is a relational database management system from Microsoft. Use this tag for all SQL Server editions including Compact, Express, Azure, FastTrack and PDW.",Microsoft Sql Server,sqlserver,sql-server,sql,sqlserver
+"MySQL is an open-source, relational database management system. If your issue relates to MySQLi, use the MySQLi tag instead.",mysql,mysql,mysql,"my,mys",mysql
+"Node.JS is an event-based, asynchronous I/O framework that uses Google&#39;s V8 JavaScript engine.",Node.JS,Node,node.js,"node,nodejs,npm",node.js
+This tag should be used only on questions that contain Objective-C code or are about Objective-C features. The tags &quot;cocoa&quot; and &quot;cocoa-touch&quot; should be used on questions about Apple&#39;s frameworks or classes.,Objective-C,objectiveC,objective-c,,objectivec
+"PhoneGap is an open-source, cross-device mobile development platform that allows developers to create mobile applications using HTML, JavaScript, and CSS that can be deployed to each device, rather than programming in each device&#39;s native language.",phonegap,phonegap,phonegap,,phonegap
+PHP is a general-purpose scripting language widely used in web development.,PHP,php,php,,php
+,PostgreSQL,Postgres,postgres,,postgres
+Python is a dynamic and strongly typed programming language that is designed to emphasize usability. Two similar but incompatible versions of Python are in widespread use (2 and 3). Please consider mentioning the version and implementation that you are using when asking a question about Python.,python,python,python,,python
+"Redis is an open source, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets.",Redis,redis,redis,,redis
+Ruby on Rails is an open source full-stack web application framework written in Ruby. It follows the popular MVC framework model and is known for its &quot;convention over configuration&quot; approach to application development.,Ruby on Rails,ruby-on-rails,ruby-on-rails,"rails,ror, rrr",ruby-on-rails
+RubyMotion is a commercial system for building native iOS apps using Ruby.,RubyMotion,rubymotion,rubymotion,,rubymotion
+Ruby is a multi-platform open-source dynamic object-oriented interpreted language created by Yukihiro Matsumoto (Matz) in 1993.,ruby,ruby,ruby,,ruby
+"Sinatra is a Domain Specific Language (DSL) for quickly creating web applications in Ruby with minimal effort. It is an alternative to other Ruby web application frameworks such as Ruby on Rails, Merb, Nitro, Camping, and Rango.",Sinatra,sinatra,sinatra,,sinatra
+"Short Message Service (SMS) is the standardized text communication service component of phone, web or mobile communication systems that allow the exchange of short text messages between fixed line or mobile phone devices.",SMS,sms,sms,,sms
+"Socket.IO aims to make realtime apps possible in every browser and mobile device, blurring the differences between the different transport mechanisms. It supports multiple transports, such as WebSockets, Flash sockets, long polling and more, automatically falling back when a transport fails.",socket.io,socket.io,socket.io,,socket.io
+"The Spring Framework is an open source application framework for the Java platform, designed to make Java SE/Java EE technologies easier to use.",Spring,spring,spring,,spring
+"A stream is a series of data elements (characters, bytes or complex packets) which can be accessed or made accessible in a serial fashion. Random access is not possible.",Streaming,stream,stream,,stream
+Ubuntu is a free desktop and server operating system based on Debian GNU/Linux. Note that http://askubuntu.com is specifically dedicated to Ubuntu questions.,Ubuntu,ubuntu,ubuntu,,ubuntu
+The Unix operating system is a general purpose OS that was developed by Bell Labs in the late 1960s and today exists in various versions. It is known for its large collection of simple command-line utilities which allow powerful file handling and text processing capabilities to be implemented via shell scripts.,Unix,unix,unix,,unix

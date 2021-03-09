@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "daskonverter"
+version = "0.1.0"
+description = "Convert big files from one format to another"
+authors = ["M. Eren Akbiyik <erenakbiyik@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+dask = {extras = ["bag"], version = "^2021.3.0"}
+gcsfs = { version = "0.7.2", optional = true }
+fastparquet = { version = "^0.5.0", optional = true }
+pymongo = { version = "^3.11.3", optional = true }
+
+[tool.poetry.dev-dependencies]
+black = "^20.8b1"
+ipykernel = "^5.5.0"
+data-science-types = "^0.2.23"
+pytest = "^6.1.2"
+coverage = "^5.5"
+
+[tool.poetry.extras]
+dslab = ["gcsfs", "fastparquet", "pymongo"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
