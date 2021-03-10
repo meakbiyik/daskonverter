@@ -19,7 +19,7 @@ def convert_files(
     To use with remote, ensure proper authentication. For GCS, this can be done
     via command `gcloud auth application-default login`
 
-    If run from the console or in a notebook, `dask` may require 
+    If run from the console or in a notebook, `dask` may require
     `if __name__ == "__main__"` conditional. See dask/distributed/issues/2520
     for more information.
 
@@ -71,15 +71,6 @@ def convert_files(
             f"filetypes {list(_FILETYPE_READERS.keys())}."
         )
 
-    open_files = dby.open_files(urlpath)
-    reader, _reader_kwargs = _FILETYPE_READERS[source_filetype]
-    _reader_kwargs.update(reader_kwargs)
-
-    df = reader(open_files, **_reader_kwargs)
-
-    for file in open_files:
-        file.close()
-
     if target_filetype is None:
         target_filetype = str(targetpath).split(".")[-1]
 
@@ -91,10 +82,22 @@ def convert_files(
             f"filetypes {list(_FILETYPE_WRITERS.keys())}."
         )
 
+    open_files = dby.open_files(urlpath)
+    reader, _reader_kwargs = _FILETYPE_READERS[source_filetype]
+    _reader_kwargs.update(reader_kwargs)
+
+    df = reader(open_files, **_reader_kwargs)
+
     writer, _writer_kwargs = _FILETYPE_WRITERS[target_filetype]
     _writer_kwargs.update(writer_kwargs)
 
-    return writer(df)(targetpath, **_writer_kwargs)
+    result = writer(df)(targetpath, **_writer_kwargs)
+
+    if _writer_kwargs.get("compute", True):
+        for file in open_files:
+            file.close()
+
+    return result
 
 
 def _read_bson(open_files, partition_size) -> dd.DataFrame:
