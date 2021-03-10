@@ -1,5 +1,9 @@
 # daskonverter
 
+<!-- badges: start -->
+[![Python package](https://github.com/meakbiyik/daskonverter/actions/workflows/Python-package.yaml/badge.svg)](https://github.com/meakbiyik/daskonverter/actions/workflows/Python-package.yaml)
+<!-- badges: end -->
+
 A small python package to convert big source files from one format to another, even for remote files.
 
 ## Usage
