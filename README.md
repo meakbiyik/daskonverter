@@ -12,14 +12,7 @@ A small python package to convert big source files from one format to another, e
 if __name__ == "__main__":
 
     convert_files("gcs://daskonverter/mongodump.airpair.tags.bson", "test2.csv")
-    convert_files(r"C:\blah\mongodump.airpair.tags.bson", "test.csv")
-    convert_files(
-        r"C:\blah\mongodump.airpair.tags.bson",
-        "test.parquet",
-        write_index=False,
-        write_metadata_file=False,
-        partition_size=1024,
-    )
+    convert_files("C:\\blah\\mongodump.airpair.tags.bson", "gcs://daskonverter/test.csv")
 ```
 
 ## Installation

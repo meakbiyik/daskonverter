@@ -1,9 +1,22 @@
 import itertools
 
-import bson
 import dask.dataframe as dd
 import dask.bag as db
 import dask.bytes as dby
+
+try:
+    import bson
+except:
+    from unittest.mock import Mock
+
+    bson = Mock()
+    bson.decode_file_iter = Mock(
+        side_effect=ImportError(
+            "Cannot read BSON as pymongo is not installed. "
+            "Please install it either via ´pip install pymongo´ or "
+            "use daskonverter extra ´full´."
+        )
+    )
 
 
 def convert_files(
@@ -48,16 +61,8 @@ def convert_files(
     --------
 
     >>> if __name__ == "__main__":
-    >>>     convert_files("gcs://twitter-data-bucket/big_dump/snp500_articles.bson", "snp500_articles.csv")
     >>>     convert_files("gcs://daskonverter/mongodump.airpair.tags.bson", "test2.csv")
-    >>>     convert_files("C:\\blah\\mongodump.airpair.tags.bson", "test.csv")
-    >>>     convert_files(
-                "C:\\blah\\mongodump.airpair.tags.bson",
-                "test.parquet",
-                write_index=False,
-                write_metadata_file=False,
-                partition_size=1024,
-            )
+    >>>     convert_files("C:\\blah\\mongodump.airpair.tags.bson", "gcs://daskonverter/test.csv")
     """
 
     if source_filetype is None:
