@@ -8,6 +8,14 @@ A small python package to convert big source files from one format to another, e
 
 ## Usage
 
+### via CLI
+
+```bash
+poetry run daskonverter test.csv test.parquet
+```
+
+### from Python
+
 ```python
 if __name__ == "__main__":
 
@@ -16,6 +24,14 @@ if __name__ == "__main__":
 ```
 
 ## Installation
+
+### CLI
+
+```bash
+poetry install git+https://github.com/meakbiyik/daskonverter.git -E cli
+```
+
+### Python
 
 ```bash
 pip install git+https://github.com/meakbiyik/daskonverter.git

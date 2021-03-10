@@ -20,14 +20,14 @@ except:
 
 
 def convert_files(
-    urlpath: str,
-    targetpath: str,
+    source_path: str,
+    target_path: str,
     source_filetype: str = None,
     target_filetype: str = None,
     reader_kwargs: dict = {},
     writer_kwargs: dict = {},
 ):
-    """Convert source files from urlpath to targetpath.
+    """Convert source files from source_path to target_path.
 
     To use with remote, ensure proper authentication. For GCS, this can be done
     via command `gcloud auth application-default login`
@@ -38,9 +38,9 @@ def convert_files(
 
     Parameters
     ----------
-    urlpath : str
+    source_path : str
         Source file path or glob. Possibly remote, if given with prefixes such as `gcs://`
-    targetpath : str
+    target_path : str
         Target file path, possibly remote
     source_filetype : str, optional
         File type of the source. If not given, it is inferred from the extension, by default None
@@ -66,7 +66,7 @@ def convert_files(
     """
 
     if source_filetype is None:
-        source_filetype = str(urlpath).split(".")[-1]
+        source_filetype = str(source_path).split(".")[-1]
 
     source_filetype = source_filetype.lower()
 
@@ -77,7 +77,7 @@ def convert_files(
         )
 
     if target_filetype is None:
-        target_filetype = str(targetpath).split(".")[-1]
+        target_filetype = str(target_path).split(".")[-1]
 
     target_filetype = target_filetype.lower()
 
@@ -87,7 +87,7 @@ def convert_files(
             f"filetypes {list(_FILETYPE_WRITERS.keys())}."
         )
 
-    open_files = dby.open_files(urlpath)
+    open_files = dby.open_files(source_path)
     reader, _reader_kwargs = _FILETYPE_READERS[source_filetype]
     _reader_kwargs.update(reader_kwargs)
 
@@ -96,7 +96,7 @@ def convert_files(
     writer, _writer_kwargs = _FILETYPE_WRITERS[target_filetype]
     _writer_kwargs.update(writer_kwargs)
 
-    result = writer(df)(targetpath, **_writer_kwargs)
+    result = writer(df)(target_path, **_writer_kwargs)
 
     if _writer_kwargs.get("compute", True):
         for file in open_files:
