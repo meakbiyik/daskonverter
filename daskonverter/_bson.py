@@ -1,6 +1,7 @@
 import itertools
 import struct
 import os
+import threading
 
 import pandas as pd
 import dask
@@ -10,6 +11,22 @@ import bson
 from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
 from bson.errors import InvalidBSON
 from flatten_dict import flatten
+
+
+class LockedIterator(object):
+    def __init__(self, it):
+        self.lock = threading.Lock()
+        self.it = it.__iter__()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.lock.acquire()
+        try:
+            return next(self.it)
+        finally:
+            self.lock.release()
 
 
 class _ObjectIdCodec(TypeCodec):
@@ -26,9 +43,7 @@ class _ObjectIdCodec(TypeCodec):
         return str(value)
 
 
-_OID_CODEC = _ObjectIdCodec()
-_TYPE_REGISTRY = TypeRegistry([_OID_CODEC])
-_CODEC_OPTIONS = CodecOptions(type_registry=_TYPE_REGISTRY)
+_CODEC_OPTIONS = CodecOptions(type_registry=TypeRegistry([_ObjectIdCodec()]))
 _UNPACK_INT = struct.Struct("<i").unpack
 
 
@@ -43,8 +58,13 @@ def _read_bson(
     for fs in file_desc:
         fs.seek(0)
 
-    file_iterator = itertools.chain(
-        *[bson.decode_file_iter(fs, codec_options=_CODEC_OPTIONS) for fs in file_desc]
+    file_iterator = LockedIterator(
+        itertools.chain(
+            *[
+                bson.decode_file_iter(fs, codec_options=_CODEC_OPTIONS)
+                for fs in file_desc
+            ]
+        )
     )
 
     def document_spitter(_):

@@ -1,4 +1,3 @@
-import dask
 import dask.dataframe as dd
 import dask.bytes as dby
 
@@ -95,7 +94,7 @@ def convert_files(
 
     if source_filetype == "bson":
         _writer_kwargs["compute_kwargs"] = dict(
-            _writer_kwargs.get("compute_kwargs", {}), **{"scheduler": "single-threaded"}
+            _writer_kwargs.get("compute_kwargs", {}), **{"scheduler": "threads"}
         )
 
     result = writer(df)(target_path, **_writer_kwargs)
