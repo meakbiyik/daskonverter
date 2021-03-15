@@ -13,10 +13,10 @@ from bson.errors import InvalidBSON
 from flatten_dict import flatten
 
 
-class LockedIterator(object):
-    def __init__(self, it):
+class LockedGenerator(object):
+    def __init__(self, gen):
         self.lock = threading.Lock()
-        self.it = it.__iter__()
+        self.gen = gen
 
     def __iter__(self):
         return self
@@ -24,7 +24,7 @@ class LockedIterator(object):
     def __next__(self):
         self.lock.acquire()
         try:
-            return next(self.it)
+            return next(self.gen)
         finally:
             self.lock.release()
 
@@ -58,7 +58,7 @@ def _read_bson(
     for fs in file_desc:
         fs.seek(0)
 
-    file_iterator = LockedIterator(
+    file_iterator = LockedGenerator(
         itertools.chain(
             *[
                 bson.decode_file_iter(fs, codec_options=_CODEC_OPTIONS)
