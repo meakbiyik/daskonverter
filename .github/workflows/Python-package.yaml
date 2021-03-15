@@ -29,7 +29,7 @@ jobs:
         poetry-version: 1.1.5
     - name: Install dependencies
       run: |
-        poetry lock && poetry install -E full
+        poetry install -E full
     - name: Run black
       run: |
         poetry run python -m black -t py38 . --check
