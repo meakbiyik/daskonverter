@@ -6,14 +6,16 @@ authors = ["M. Eren Akbiyik <erenakbiyik@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.7.1"
+pandas = "^1.2.3"
 dask = { extras = ["bag"], version = "^2021.3.0" }
 gcsfs = { version = "0.7.2", optional = true }
-fastparquet = { version = "^0.5.0", optional = true }
 pymongo = { version = "^3.11.3", optional = true }
+flatten-dict = { version = "^0.3.0", optional = true }
 click = { version = "^7.1.2", optional = true }
 colorama = { version = "^0.4.4", optional = true }
 click-help-colors = { version = "^0.8", optional = true }
+pyarrow = { version = "^3.0.0", optional = true }
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
@@ -23,8 +25,8 @@ pytest = "^6.1.2"
 coverage = "^5.5"
 
 [tool.poetry.extras]
-full = ["gcsfs", "fastparquet", "pymongo"]
-cli = ["gcsfs", "fastparquet", "pymongo", "click", "colorama", "click-help-colors"]
+full = ["gcsfs", "fastparquet", "pymongo", "flatten-dict", "pyarrow"]
+cli = ["gcsfs", "fastparquet", "pymongo", "flatten-dict", "pyarrow", "click", "colorama", "click-help-colors"]
 
 [tool.poetry.scripts]
 daskonverter = "daskonverter.__main__:cli"

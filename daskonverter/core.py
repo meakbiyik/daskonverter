@@ -1,16 +1,13 @@
-import itertools
-
+import dask
 import dask.dataframe as dd
-import dask.bag as db
 import dask.bytes as dby
 
 try:
-    import bson
-except:
+    from ._bson import _read_bson
+except ImportError:
     from unittest.mock import Mock
 
-    bson = Mock()
-    bson.decode_file_iter = Mock(
+    _read_bson = Mock(
         side_effect=ImportError(
             "Cannot read BSON as pymongo is not installed. "
             "Please install it either via ´pip install pymongo´ or "
@@ -96,6 +93,11 @@ def convert_files(
     writer, _writer_kwargs = _FILETYPE_WRITERS[target_filetype]
     _writer_kwargs.update(writer_kwargs)
 
+    if source_filetype == "bson":
+        _writer_kwargs["compute_kwargs"] = dict(
+            _writer_kwargs.get("compute_kwargs", {}), **{"scheduler": "single-threaded"}
+        )
+
     result = writer(df)(target_path, **_writer_kwargs)
 
     if _writer_kwargs.get("compute", True):
@@ -105,24 +107,11 @@ def convert_files(
     return result
 
 
-def _read_bson(open_files, partition_size) -> dd.DataFrame:
-    def metadata_remover(document):
-        document.pop("_id", None)
-        document.pop("__v", None)
-        return document
-
-    file_iterator = itertools.chain(
-        *[bson.decode_file_iter(file.open()) for file in open_files]
-    )
-
-    bag = db.from_sequence(file_iterator, partition_size=partition_size)
-    df = bag.map(metadata_remover).to_dataframe()
-
-    return df
-
-
 _FILETYPE_READERS = {
-    "bson": (_read_bson, {"partition_size": 1024}),
+    "bson": (
+        _read_bson,
+        {"partition_size": 100000, "flatten_document": True, "meta_take_count": 256},
+    ),
     "csv": (dd.read_csv, {}),
     "table": (dd.read_table, {}),
     "fwf": (dd.read_fwf, {}),
@@ -133,7 +122,7 @@ _FILETYPE_READERS = {
 }
 
 _FILETYPE_WRITERS = {
-    "parquet": (lambda df: df.to_parquet, {}),
+    "parquet": (lambda df: df.to_parquet, {"compression": "gzip"}),
     "csv": (lambda df: df.to_csv, {"single_file": True, "index": False}),
     "hdf": (lambda df: df.to_hdf, {}),
     "json": (lambda df: df.to_json, {}),
