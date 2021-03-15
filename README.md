@@ -45,6 +45,8 @@ if __name__ == "__main__":
 
 ## Installation
 
+To use the components with remote sources or targets, user needs to ensure proper authentication. For GCS, this can be done via command `gcloud auth application-default login`
+
 ### CLI
 
 1. Install [Poetry](https://python-poetry.org/), a dependency management tool for Python, via the following command
