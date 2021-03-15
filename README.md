@@ -47,9 +47,17 @@ if __name__ == "__main__":
 
 ### CLI
 
-```bash
-poetry install git+https://github.com/meakbiyik/daskonverter.git -E cli
-```
+1. Install [Poetry](https://python-poetry.org/), a dependency management tool for Python, via the following command
+
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+    ```
+
+2. Clone this repository to your local, navigate into the folder and run
+
+    ```bash
+    poetry install --no-dev --extras cli
+    ```
 
 ### Python
 
